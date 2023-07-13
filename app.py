@@ -1,6 +1,8 @@
 from flask import Flask
 from extensions import db
 from controllers.owner_controller import owner_blueprint
+from flasgger import Swagger
+
 
 def create_app():
     app = Flask(__name__)
@@ -14,5 +16,6 @@ def create_app():
 
     app.register_blueprint(owner_blueprint)
 
+    Swagger(app)
 
     return app

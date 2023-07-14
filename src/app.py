@@ -1,8 +1,8 @@
 from flask import Flask
-from extensions import db
-from controllers.owner_controller import owner_blueprint
+from src.controllers.owner_controller import owner_blueprint
 from flasgger import Swagger
-from services.seed_service import SeedService
+from src.services.seed_service import SeedService
+from src.extensions import db
 
 
 def create_app():

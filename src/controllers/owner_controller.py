@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from repositories.owner_repository import OwnerRepository
+from src.repositories.owner_repository import OwnerRepository
 
 owner_blueprint = Blueprint('owner', __name__)
 

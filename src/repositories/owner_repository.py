@@ -1,6 +1,6 @@
 import uuid
 from werkzeug.security import generate_password_hash
-from models.owner_model import Owner, db
+from src.models.owner_model import Owner, db
 
 
 class OwnerRepository:

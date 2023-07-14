@@ -1,5 +1,5 @@
-from repositories.owner_repository import OwnerRepository
-from models.owner_model import Owner
+from src.repositories.owner_repository import OwnerRepository
+from src.models.owner_model import Owner
 
 
 class SeedService:

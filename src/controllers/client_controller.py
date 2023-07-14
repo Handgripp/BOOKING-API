@@ -22,7 +22,7 @@ def create_client():
         in: body
         required: true
         schema:
-          id: Owner
+          id: Client
           required:
             - first_name
             - last_name

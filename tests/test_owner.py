@@ -22,7 +22,7 @@ def client():
 
 def test_should_return_201_on_create_owner(client):
     data = {
-        'email': 'johndaaoe@example.com',
+        'email': 'johndaaoee@example.com',
         'password': 'secretpassword'
     }
 
@@ -33,10 +33,21 @@ def test_should_return_201_on_create_owner(client):
 
 def test_should_return_400_on_create_owner(client):
     data = {
-        'email': 'johndaao.com',
+        'email': 'johnndaao.com',
         'password': 'secretpassword'
     }
 
     response = client.post('/owners', json=data)
 
     assert response.status_code == 400
+
+
+def test_should_return_409_on_create_owner(client):
+    data = {
+        'email': 'john@doe.com',
+        'password': 'secretpassword'
+    }
+
+    response = client.post('/owners', json=data)
+
+    assert response.status_code == 409

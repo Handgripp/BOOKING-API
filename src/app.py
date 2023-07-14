@@ -1,5 +1,6 @@
 from flask import Flask
 from src.controllers.owner_controller import owner_blueprint
+from src.controllers.client_controller import client_blueprint
 from flasgger import Swagger
 from src.services.seed_service import SeedService
 from src.extensions import db
@@ -18,6 +19,7 @@ def create_app():
         seed.run()
 
     app.register_blueprint(owner_blueprint)
+    app.register_blueprint(client_blueprint)
 
     Swagger(app)
 

@@ -13,15 +13,16 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         secret_key = current_app.config['SECRET_KEY']
-        token = None
+        authorization = None
 
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'Authorization' in request.headers:
+            authorization = request.headers['Authorization']
 
-        if not token:
+        if not authorization:
             return jsonify({'error': 'Token is missing!'}), 401
 
         try:
+            token = authorization.split()[1]
             data = jwt.decode(token, secret_key, algorithms=['HS256'])
             current_user = Owner.query.filter_by(id=data['id']).first()
             if not current_user:

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 
+from src.controllers.auth_controller import token_required
 from src.models.client_model import Client
 from src.models.owner_model import Owner
 from src.repositories.client_repository import ClientRepository
@@ -76,7 +77,8 @@ def create_client():
 
 
 @client_blueprint.route("/clients/<user_id>", methods=["GET"])
-def get_one(user_id):
+@token_required
+def get_one(current_user, user_id):
     """
         Get client
         ---
@@ -86,6 +88,8 @@ def get_one(user_id):
           - name: user_id
             in: path
             required: true
+        security:
+          - Bearer: []
         responses:
           200:
             description: The owner successfully returned

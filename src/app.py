@@ -23,8 +23,17 @@ def create_app():
     app.register_blueprint(client_blueprint)
     app.register_blueprint(auth_blueprint)
 
-    Swagger(app)
+    template = {
+        "securityDefinitions": {
+            "Bearer":
+                {
+                    "type": "apiKey",
+                    "name": "Authorization",
+                    "in": "header"
+                }
+        }
+    }
 
-
+    Swagger(app, template=template)
 
     return app

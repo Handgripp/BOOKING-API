@@ -6,7 +6,7 @@ from src.models.owner_model import Owner
 from src.repositories.client_repository import ClientRepository
 from jsonschema import validate, ValidationError
 from src.schemas.client_schema import create_client_schema
-
+from src.services.geoapi import CityChecker
 
 client_blueprint = Blueprint('client', __name__)
 
@@ -70,6 +70,12 @@ def create_client():
 
     if email_from_clients or email_from_owners:
         return jsonify({'error': 'User with that email already exists'}), 409
+
+    city = CityChecker(data["city"])
+    city_checker = city.check_city_existence()
+
+    if not city_checker:
+        return jsonify({'error': 'City does not exist'}), 404
 
     ClientRepository.create_client(data["first_name"], data["last_name"], data["city"], data["email"], data["password"])
 

@@ -79,7 +79,7 @@ def login():
         if not owner.is_email_confirmed:
             return jsonify({'error': 'Email not confirmed'}), 401
         token = jwt.encode(
-            {'id': str(owner.id), 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+            {'id': str(owner.id), 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
              'user_type': 'owner'},
             secret_key,
             algorithm='HS256')
@@ -89,7 +89,7 @@ def login():
         if not client.is_email_confirmed:
             return jsonify({'error': 'Email not confirmed'}), 401
         token = jwt.encode(
-            {'id': str(client.id), 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+            {'id': str(client.id), 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
              'user_type': 'client'},
             secret_key,
             algorithm='HS256')

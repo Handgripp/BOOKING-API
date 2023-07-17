@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from src.app import create_app
 from src.extensions import db
@@ -46,6 +48,21 @@ def test_should_return_400_on_create_client(client):
     response = client.post('/clients', json=data)
 
     assert response.status_code == 400
+
+
+def test_should_return_404_on_wrong_city(client):
+    data = {
+        'first_name': 'Kamil',
+        'last_name': 'Malkowski',
+        'city': 'Aaaaavvv',
+        'email': 'johny@dooe.com',
+        'password': 'secretpassword'
+    }
+
+    response = client.post('/clients', json=data)
+    response_json = json.loads(response.data)
+    assert response_json["error"] == "City does not exist"
+    assert response.status_code == 404
 
 
 def test_should_return_409_on_create_client(client):

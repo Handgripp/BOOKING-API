@@ -1,10 +1,13 @@
+import os
 import requests
+from dotenv import load_dotenv
 
 
 class CityChecker:
     def __init__(self, city):
         self.city = city
-        self.api_key = "8bd61fd34948f6e33e20c26d833e6429"
+        load_dotenv()
+        self.api_key = os.getenv("API_KEY")
         self.url = f"https://api.openweathermap.org/geo/1.0/direct?q={self.city}&limit=1&appid={self.api_key}"
         self.exists = False
 

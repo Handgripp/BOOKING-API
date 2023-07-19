@@ -53,7 +53,7 @@ def create_client():
               example: "Kołobrzeg"
     responses:
       201:
-        description: The owner inserted in the database
+        description: The client inserted in the database
     """
 
     data = request.json
@@ -98,7 +98,7 @@ def get_one(current_user, user_id):
           - Bearer: []
         responses:
           200:
-            description: The owner successfully returned
+            description: The client successfully returned
         """
     user_data = ClientRepository.get_one_by_id(user_id)
 

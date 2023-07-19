@@ -108,7 +108,7 @@ def search_hotel(current_user, hotel_id):
           - Bearer: []
         responses:
           200:
-            description: Hotel searched
+            description: Hotel found
         """
 
     user_city = current_user.city

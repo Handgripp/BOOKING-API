@@ -25,12 +25,12 @@ class SeedService:
         return owner["id"]
 
     def create_client(self):
-        client = ClientRepository.create_client("Kamil", "Malkowski", "Kolobrzeg", "johny@doe.com", "qwerty")
+        client = ClientRepository.create_client("Kamil", "Malkowski", "Zieleniewo", "johny@doe.com", "qwerty")
         ClientRepository.email_confirmation(client["id"])
         return client["id"]
 
     def create_client_without_confirmed_email(self):
-        client = ClientRepository.create_client("Kamil", "Malkowski", "Kolobrzeg", "johnyy@doe.com", "qwerty")
+        client = ClientRepository.create_client("Kamil", "Malkowski", "Kołobrzeg", "johnyy@doe.com", "qwerty")
         return client["id"]
 
     def is_database_empty(self):

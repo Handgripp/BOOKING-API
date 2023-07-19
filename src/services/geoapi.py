@@ -10,6 +10,7 @@ class CityChecker:
         self.api_key = os.getenv("API_KEY")
         self.url = f"https://api.openweathermap.org/geo/1.0/direct?q={self.city}&limit=1&appid={self.api_key}"
         self.exists = False
+        self.coordinates = None
 
     def check_city_existence(self):
         response = requests.get(self.url)
@@ -19,4 +20,11 @@ class CityChecker:
                 self.exists = True
                 return self.exists
 
-        return False
+    def get_city_coordinates(self):
+        response = requests.get(self.url)
+        data = response.json()
+        self.coordinates = {
+            "lat": data[0]["lat"],
+            "lon": data[0]["lon"]
+        }
+        return self.coordinates

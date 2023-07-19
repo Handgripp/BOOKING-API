@@ -50,7 +50,7 @@ def create_client():
             city:
               type: string
               description: Client city
-              example: "Kolobrzeg"
+              example: "Kołobrzeg"
     responses:
       201:
         description: The owner inserted in the database

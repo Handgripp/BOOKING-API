@@ -22,9 +22,10 @@ class CityChecker:
 
     def get_city_coordinates(self):
         response = requests.get(self.url)
-        data = response.json()
-        self.coordinates = {
-            "lat": data[0]["lat"],
-            "lon": data[0]["lon"]
-        }
-        return self.coordinates
+        if response.status_code == 200:
+            data = response.json()
+            self.coordinates = {
+                "lat": data[0]["lat"],
+                "lon": data[0]["lon"]
+            }
+            return self.coordinates

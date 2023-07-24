@@ -21,8 +21,8 @@ class HotelRepository:
         return hotel_data
 
     @staticmethod
-    def get_one_by_id(user_id):
-        hotel = Hotel.query.get(user_id)
+    def get_one_by_id(hotel_id):
+        hotel = Hotel.query.get(hotel_id)
         if not hotel:
             return None
 
@@ -30,9 +30,27 @@ class HotelRepository:
             'id': hotel.id,
             'created_at': hotel.created_at,
             'updated_at': hotel.updated_at,
-            'email': hotel.email,
-            'is_email_confirmed': hotel.is_email_confirmed
+            'hotel_name': hotel.hotel_name,
+            'city': hotel.city,
+            'owner_id': hotel.owner_id
         }
 
         return hotel_data
 
+    @staticmethod
+    def get_one_by_id_with_distance(hotel_id, calculated_distance):
+        hotel = Hotel.query.get(hotel_id)
+        if not hotel:
+            return None
+
+        hotel_data = {
+            'id': hotel.id,
+            'created_at': hotel.created_at,
+            'updated_at': hotel.updated_at,
+            'hotel_name': hotel.hotel_name,
+            'city': hotel.city,
+            'owner_id': hotel.owner_id,
+            'distance': calculated_distance
+        }
+
+        return hotel_data

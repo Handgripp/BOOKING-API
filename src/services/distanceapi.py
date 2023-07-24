@@ -15,7 +15,8 @@ class DistanceCalculator:
 
     def calculate_distance(self):
         response = requests.get(self.url)
-        data = response.json()
-        distance = data["features"][0]["properties"]["segments"][0]["distance"]
-        return distance/1000
+        if response.status_code == 200:
+            data = response.json()
+            distance = data["features"][0]["properties"]["segments"][0]["distance"]
+            return distance
 

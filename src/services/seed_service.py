@@ -10,6 +10,7 @@ class SeedService:
         if self.is_database_empty():
             print("Run seeding service")
             self.create_owner()
+            self.create_owner_test()
             self.create_owner_without_confirmed_email()
             self.create_client()
             self.create_client_without_confirmed_email()
@@ -17,6 +18,11 @@ class SeedService:
 
     def create_owner(self):
         owner = OwnerRepository.create_owner("john@doe.com", "qwerty")
+        OwnerRepository.email_confirmation(owner["id"])
+        return owner["id"]
+
+    def create_owner_test(self):
+        owner = OwnerRepository.create_owner_test("3ba523c8-99f8-4779-b4db-416513b2bf85", "test@test.com", "qwerty")
         OwnerRepository.email_confirmation(owner["id"])
         return owner["id"]
 

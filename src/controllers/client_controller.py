@@ -71,8 +71,13 @@ def create_client():
     if email_from_clients or email_from_owners:
         return jsonify({'error': 'User with that email already exists'}), 409
 
-    city = CityChecker(data["city"])
-    city_checker = city.check_city_existence()
+    try:
+        city = CityChecker(data["city"])
+        city_checker = city.check_city_existence()
+    except ConnectionError:
+        return jsonify({"error": "Connection error with external API"}), 503
+    except Exception as e:
+        return jsonify({"error": str(e)}), 503
 
     if not city_checker:
         return jsonify({'error': 'City does not exist'}), 404

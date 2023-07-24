@@ -13,6 +13,7 @@ def create_app():
     app.config['SECRET_KEY'] = 'thisissecret'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost:5432/dbname'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
     db.init_app(app)
     seed = SeedService()
 

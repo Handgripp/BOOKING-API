@@ -75,9 +75,9 @@ def create_hotel(current_user):
     if hotel:
         return jsonify({'error': 'Hotel with that name already exists'}), 409
 
-    HotelRepository.create_hotel(current_user.id, data["hotel_name"], data["city"])
+    hotel_data = HotelRepository.create_hotel(current_user.id, data["hotel_name"], data["city"])
 
-    return jsonify({'message': 'New hotel created'}), 201
+    return jsonify({'hotel': hotel_data}), 201
 
 
 @hotel_blueprint.route("/hotels/<hotel_id>", methods=["GET"])

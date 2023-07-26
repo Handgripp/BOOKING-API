@@ -3,6 +3,7 @@ from src.controllers.owner_controller import owner_blueprint
 from src.controllers.client_controller import client_blueprint
 from src.controllers.auth_controller import auth_blueprint
 from src.controllers.hotel_controller import hotel_blueprint
+from src.controllers.opinion_controller import opinion_blueprint
 from flasgger import Swagger
 from src.services.seed_service import SeedService
 from src.extensions import db
@@ -25,6 +26,7 @@ def create_app():
     app.register_blueprint(client_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(hotel_blueprint)
+    app.register_blueprint(opinion_blueprint)
 
     template = {
         "securityDefinitions": {

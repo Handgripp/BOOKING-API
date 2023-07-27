@@ -3,7 +3,6 @@ from src.controllers.auth_controller import token_required
 from src.models.client_model import Client
 from src.models.hotel_model import Hotel
 from jsonschema import validate, ValidationError
-
 from src.models.opinion_model import Opinion
 from src.repositories.opinion_repository import OpinionRepository
 from src.schemas.opinion_schema import create_opinion_schema

@@ -54,3 +54,24 @@ class HotelRepository:
         }
 
         return hotel_data
+
+    @staticmethod
+    def get_all_from_city(city, calculated_distance):
+        hotels = Hotel.query.filter_by(city=city).all()
+        print(hotels)
+        if not hotels:
+            return None
+        hotels_data = []
+        for hotel in hotels:
+            hotel_data = {
+                'id': hotel.id,
+                'created_at': hotel.created_at,
+                'updated_at': hotel.updated_at,
+                'hotel_name': hotel.hotel_name,
+                'city': hotel.city,
+                'owner_id': hotel.owner_id,
+                'distance': calculated_distance
+            }
+            hotels_data.append(hotel_data)
+
+        return hotels_data

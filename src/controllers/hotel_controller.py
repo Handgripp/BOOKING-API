@@ -151,3 +151,87 @@ def search_hotel(current_user, hotel_id):
         return jsonify({'error': 'No hotel found'}), 404
 
     return jsonify(hotel_data), 200
+
+
+@hotel_blueprint.route("/hotels/search", methods=["GET"])
+@token_required
+def search_hotel_params(current_user):
+    """
+        Get hotel
+        ---
+        tags:
+          - hotels
+        parameters:
+          - name: city
+            in: query
+            required: false
+          - name: hotel_name
+            in: query
+            required: false
+        security:
+          - Bearer: []
+        responses:
+          200:
+            description: Hotel found
+        """
+    hotel_name = request.args.get('hotel_name')
+    city = request.args.get('city')
+
+    client = Client.query.filter_by(id=current_user.id).first()
+    if hotel_name:
+        hotel = Hotel.query.filter_by(hotel_name=hotel_name).first()
+        if not hotel:
+            return jsonify({'error': 'No hotel found'}), 404
+        calculated_distance = 0
+        if client:
+            try:
+                city_user = CityChecker(current_user.city)
+                city_hotel = CityChecker(hotel.city)
+                coordinates_user = city_user.get_city_coordinates()
+                coordinates_hotel = city_hotel.get_city_coordinates()
+
+                coordinates_origin = coordinates_user['lon'], coordinates_user['lat']
+                coordinates_destination = coordinates_hotel['lon'], coordinates_hotel['lat']
+
+                distance = DistanceCalculator(coordinates_origin, coordinates_destination)
+                calculated_distance += distance.calculate_distance()
+            except ConnectionError:
+                return jsonify({"error": "Connection error with external API"}), 503
+            except Exception as e:
+                return jsonify({"error": str(e)}), 503
+
+        else:
+            return jsonify({'error': 'No user found'}), 404
+        hotel_data = HotelRepository.get_one_by_id_with_distance(hotel.id, calculated_distance)
+
+        return jsonify(hotel_data), 200
+
+    if city:
+        calculated_distance = 0
+        if client:
+            try:
+                city_user = CityChecker(current_user.city)
+                searched_city = CityChecker(city)
+                city_exists = searched_city.check_city_existence()
+                if not city_exists:
+                    return jsonify({'error': 'No city found'}), 404
+
+                coordinates_user = city_user.get_city_coordinates()
+                coordinates_city = searched_city.get_city_coordinates()
+
+                coordinates_origin = coordinates_user['lon'], coordinates_user['lat']
+                coordinates_destination = coordinates_city['lon'], coordinates_city['lat']
+
+                distance = DistanceCalculator(coordinates_origin, coordinates_destination)
+                calculated_distance += distance.calculate_distance()
+            except ConnectionError:
+                return jsonify({"error": "Connection error with external API"}), 503
+            except Exception as e:
+                return jsonify({"error": str(e)}), 503
+
+        else:
+            return jsonify({'error': 'No user found'}), 404
+
+        hotel_data = HotelRepository.get_all_from_city(city, calculated_distance)
+
+        return jsonify(hotel_data), 200

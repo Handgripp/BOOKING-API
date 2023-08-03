@@ -81,8 +81,8 @@ def create_reservation(current_user, hotel_id, apartment_id):
 
     apartment_price = apartment.price
 
-    date_from = datetime.strptime(data["date_from"], "%Y-%m-%d")
-    date_to = datetime.strptime(data["date_to"], "%Y-%m-%d")
+    date_from = datetime.strptime(data["date_from"], "%Y-%m-%d").replace(hour=15, minute=0, second=0)
+    date_to = datetime.strptime(data["date_to"], "%Y-%m-%d").replace(hour=12, minute=0, second=0)
 
     days = date_to - date_from
     price = apartment_price * days.days
@@ -94,7 +94,7 @@ def create_reservation(current_user, hotel_id, apartment_id):
         return jsonify({'error': 'No apartment found!'}), 404
 
     reservation_data = ReservationRepository.create_reservation(hotel_id, apartment_id, current_user.id,
-                                                                data["date_from"], data["date_to"], price,
+                                                                date_from, date_to, price,
                                                                 data["room_deposit"])
 
     return jsonify({'apartment': reservation_data}), 201

@@ -192,7 +192,7 @@ def search_hotel_params(current_user):
     hotel = Hotel.query.filter_by(hotel_name=hotel_name).first()
     client = Client.query.filter_by(id=current_user.id).first()
 
-    date_from = datetime.strptime(date_from_params, "%Y-%m-%d")
+    date_from = datetime.strptime(date_from_params, "%Y-%m-%d").replace(hour=15, minute=0, second=0)
     date_to = datetime.strptime(date_to_params, "%Y-%m-%d")
 
     reservations = Reservation.query.filter(

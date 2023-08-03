@@ -1,4 +1,6 @@
 import uuid
+
+from src.models.apartment_model import Apartment
 from src.models.hotel_model import Hotel, db
 
 
@@ -23,6 +25,12 @@ class HotelRepository:
     @staticmethod
     def get_one_by_id(hotel_id):
         hotel = Hotel.query.get(hotel_id)
+        apartments = Apartment.query.filter_by(hotel_id=hotel_id, is_free=False).all()
+        number_free_apartment = 0
+
+        for i in apartments:
+            number_free_apartment += 1
+
         if not hotel:
             return None
 
@@ -32,7 +40,8 @@ class HotelRepository:
             'updated_at': hotel.updated_at,
             'hotel_name': hotel.hotel_name,
             'city': hotel.city,
-            'owner_id': hotel.owner_id
+            'owner_id': hotel.owner_id,
+            'number_of_free_apartments': number_free_apartment
         }
 
         return hotel_data

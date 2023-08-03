@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from flask import Blueprint, request, jsonify
 
 from src.controllers.auth_controller import token_required
+from src.models.apartment_model import Apartment
 from src.models.client_model import Client
 from src.models.hotel_model import Hotel
 from src.models.owner_model import Owner
+from src.models.reservation_model import Reservation
 from src.repositories.hotel_repository import HotelRepository
 from jsonschema import validate, ValidationError
 from src.schemas.hotel_schema import create_hotel_schema
@@ -162,6 +166,12 @@ def search_hotel_params(current_user):
         tags:
           - hotels
         parameters:
+          - name: date_from
+            in: query
+            required: true
+          - name: date_to
+            in: query
+            required: true
           - name: city
             in: query
             required: false
@@ -176,10 +186,23 @@ def search_hotel_params(current_user):
         """
     hotel_name = request.args.get('hotel_name')
     city = request.args.get('city')
+    date_from_params = request.args.get('date_from')
+    date_to_params = request.args.get('date_to')
 
+    hotel = Hotel.query.filter_by(hotel_name=hotel_name).first()
     client = Client.query.filter_by(id=current_user.id).first()
+
+    date_from = datetime.strptime(date_from_params, "%Y-%m-%d")
+    date_to = datetime.strptime(date_to_params, "%Y-%m-%d")
+
+    reservations = Reservation.query.filter(
+        Reservation.hotel_id == hotel.id,
+        (Reservation.date_from <= date_to) & (date_from <= Reservation.date_to)
+    ).all()
+    if reservations:
+        return jsonify({'error': 'no free apartments'}), 404
+
     if hotel_name:
-        hotel = Hotel.query.filter_by(hotel_name=hotel_name).first()
         if not hotel:
             return jsonify({'error': 'No hotel found'}), 404
         calculated_distance = 0

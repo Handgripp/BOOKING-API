@@ -5,7 +5,6 @@ from src.models.apartment_model import Apartment
 from src.models.client_model import Client
 from src.models.hotel_model import Hotel
 from jsonschema import validate, ValidationError
-
 from src.models.reservation_model import Reservation
 from src.repositories.reservation_repository import ReservationRepository
 from src.schemas.reservation_schema import create_reservation_schema

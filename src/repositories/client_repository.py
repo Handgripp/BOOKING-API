@@ -72,3 +72,8 @@ class ClientRepository:
         client = Client.query.filter_by(id=user_id).first()
         client.is_email_confirmed = True
         db.session.commit()
+
+    @staticmethod
+    def confirm_email(client):
+        client.is_email_confirmed = True
+        db.session.commit()

@@ -1,9 +1,6 @@
 from datetime import datetime
-
 from flask import Blueprint, request, jsonify
-
 from src.controllers.auth_controller import token_required
-from src.models.apartment_model import Apartment
 from src.models.client_model import Client
 from src.models.hotel_model import Hotel
 from src.models.owner_model import Owner

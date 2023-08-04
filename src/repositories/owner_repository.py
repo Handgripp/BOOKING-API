@@ -58,3 +58,8 @@ class OwnerRepository:
         owner = Owner.query.filter_by(id=user_id).first()
         owner.is_email_confirmed = True
         db.session.commit()
+
+    @staticmethod
+    def confirm_email(owner):
+        owner.is_email_confirmed = True
+        db.session.commit()

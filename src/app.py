@@ -8,8 +8,18 @@ from src.controllers.opinion_controller import opinion_blueprint
 from flasgger import Swagger
 
 from src.controllers.reservation_controller import reservation_blueprint
+from src.services.rabbitmq_service import RabbitMQ
 from src.services.seed_service import SeedService
 from src.extensions import db
+
+
+rabbitmq_config = {
+    'host': 'localhost',
+    'port': 5672,
+    'user': 'guest',
+    'password': 'guest',
+    'queue_name': 'mail_queue',
+}
 
 
 def create_app():
@@ -20,6 +30,10 @@ def create_app():
 
     db.init_app(app)
     seed = SeedService()
+
+    rabbitmq = RabbitMQ(rabbitmq_config)
+
+    app.config['RABBITMQ'] = rabbitmq
 
     with app.app_context():
         db.create_all()

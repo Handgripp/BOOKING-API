@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from src.controllers.apartment_controller import apartment_blueprint
 from src.controllers.owner_controller import owner_blueprint
@@ -6,7 +7,6 @@ from src.controllers.auth_controller import auth_blueprint
 from src.controllers.hotel_controller import hotel_blueprint
 from src.controllers.opinion_controller import opinion_blueprint
 from flasgger import Swagger
-
 from src.controllers.reservation_controller import reservation_blueprint
 from src.services.rabbitmq_service import RabbitMQ
 from src.services.seed_service import SeedService
@@ -24,7 +24,8 @@ rabbitmq_config = {
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'thisissecret'
+    app_key = os.getenv("APP_KEY")
+    app.config['SECRET_KEY'] = app_key
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost:5432/dbname'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

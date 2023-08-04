@@ -100,11 +100,9 @@ def get_one(user_id):
 @owner_blueprint.route("/owners/confirm-email", methods=["GET"])
 def confirm_email():
     token = request.args.get('token')
-    print("ee1")
     data = jwt.decode(token, 'thisissecret', algorithms=['HS256'])
     if not token:
         return jsonify({'error': 'Bad request'}), 400
-    print("ee2")
     owner = Owner.query.filter_by(email=data['email']).first()
 
     if not owner or owner.is_email_confirmed:

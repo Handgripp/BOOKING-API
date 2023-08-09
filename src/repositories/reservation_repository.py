@@ -47,3 +47,13 @@ class ReservationRepository:
         }
 
         return apartment_data
+
+    @staticmethod
+    def confirm_reservation(reservation):
+        reservation.is_confirmed = True
+        db.session.commit()
+
+    @staticmethod
+    def delete_reservation(reservation_id):
+        db.session.delete(reservation_id)
+        db.session.commit()

@@ -1,5 +1,8 @@
+import datetime
+import json
+import jwt
 from datetime import datetime
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from src.controllers.auth_controller import token_required
 from src.models.apartment_model import Apartment
 from src.models.client_model import Client
@@ -60,7 +63,7 @@ def create_reservation(current_user, hotel_id, apartment_id):
       201:
         description: Reservation inserted in the database
     """
-
+    rabbitmq = current_app.config["RABBITMQ"]
     data = request.json
     try:
         validate(data, create_reservation_schema)
@@ -84,7 +87,17 @@ def create_reservation(current_user, hotel_id, apartment_id):
     date_to = datetime.strptime(data["date_to"], "%Y-%m-%d").replace(hour=12, minute=0, second=0)
 
     days = date_to - date_from
-    price = apartment_price * days.days
+    if days.days == 0:
+        price = apartment_price
+    elif days.days > 1:
+        price = apartment_price * days.days
+
+    reservations = Reservation.query.filter(
+        Reservation.hotel_id == hotel.id,
+        (Reservation.date_from <= date_to) & (date_from <= Reservation.date_to)
+    ).all()
+    if reservations:
+        return jsonify({'error': 'no free apartments'}), 404
 
     if not hotel:
         return jsonify({'error': 'No hotel found!'}), 404
@@ -95,6 +108,25 @@ def create_reservation(current_user, hotel_id, apartment_id):
     reservation_data = ReservationRepository.create_reservation(hotel_id, apartment_id, current_user.id,
                                                                 date_from, date_to, price,
                                                                 data["room_deposit"])
+
+    reservation = Reservation.query.filter_by(client_id=current_user.id).first()
+
+    token = jwt.encode(
+        {'id': str(reservation.id)},
+        'thisissecret',
+        algorithm='HS256')
+
+    mail = {
+        'email': current_user.email,
+        'subject': "Reservation confirmation (BOOKING)",
+        'body': f"Reservation id: {reservation.id}\n"
+                f"Hotel name: {hotel.hotel_name}\n"
+                f"Date from: {reservation.date_from}\n"
+                f"Date to: {reservation.date_to}\n"
+                f"Price: {reservation.price}\n "
+                f"Copy to confirm: http://127.0.0.1:5000//hotels/apartments/reservations/confirm-reservation?token={token}"
+    }
+    rabbitmq.send_message(json.dumps(mail))
 
     return jsonify({'apartment': reservation_data}), 201
 
@@ -122,3 +154,20 @@ def get_one(reservation_id):
     reservation_data = ReservationRepository.get_one_by_id(reservation_id)
 
     return jsonify(reservation_data), 200
+
+
+@reservation_blueprint.route("/hotels/apartments/reservations/confirm-reservation", methods=["GET"])
+def confirm_email():
+    token = request.args.get('token')
+    data = jwt.decode(token, 'thisissecret', algorithms=['HS256'])
+    if not token:
+        return jsonify({'error': 'Bad request'}), 400
+
+    reservation = Reservation.query.filter_by(id=data['id']).first()
+
+    if not reservation or reservation.is_confirmed:
+        return jsonify({'error': 'Bad request'}), 400
+
+    ReservationRepository.confirm_reservation(reservation)
+
+    return jsonify({'message': 'Reservation confirmed'}), 200

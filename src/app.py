@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Flask
 from src.controllers.apartment_controller import apartment_blueprint
 from src.controllers.owner_controller import owner_blueprint
@@ -8,6 +9,7 @@ from src.controllers.hotel_controller import hotel_blueprint
 from src.controllers.opinion_controller import opinion_blueprint
 from flasgger import Swagger
 from src.controllers.reservation_controller import reservation_blueprint
+from src.services.check_reservation_service import reservation_service
 from src.services.rabbitmq_service import RabbitMQ
 from src.services.seed_service import SeedService
 from src.extensions import db
@@ -20,6 +22,12 @@ rabbitmq_config = {
     'password': 'guest',
     'queue_name': 'mail_queue',
 }
+
+
+def check_reservations(app):
+    with app.app_context():
+        reservation_service()
+        # print('Reservations checked: %s' % datetime.now())
 
 
 def create_app():
